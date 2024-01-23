@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Text, Dimensions } from "react-native";
 
-export default function Word({ wordInfo }) {
+export default function Word({ wordInfo, answered }) {
 	const { word, missedIndex, context } = wordInfo;
 	const windowWidth = Dimensions.get("window").width;
 	const wordFontSize = Math.min(
@@ -17,11 +17,20 @@ export default function Word({ wordInfo }) {
 		width: 100%;
 		height: 100%;
 	`;
-	const StyledWord = styled.Text`
-		text-align: center;
+	const LetterContainer = styled.View`
+		display: flex;
+		flex-direction: row;
+	`;
+	const StyledLetter = styled.Text`
 		font-size: ${wordFontSize}px;
 		font-weight: 900;
 		color: #252525;
+	`;
+	const HighLetter = styled.Text`
+		font-size: ${wordFontSize}px;
+		font-weight: 900;
+		text-transform: capitalize;
+		color: #a8e4a0;
 	`;
 	const StyledContext = styled.Text`
 		text-align: center;
@@ -29,12 +38,21 @@ export default function Word({ wordInfo }) {
 		font-weight: 900;
 		color: #515151;
 	`;
-	visibleWord = word.split("");
-	visibleWord.splice(missedIndex, 1, "_");
-	visibleWord = visibleWord.join("");
+	let splittedWord = word.split("");
 	return (
 		<WordContainer>
-			<StyledWord>{visibleWord}</StyledWord>
+			<LetterContainer>
+				{splittedWord.map((item, index) => {
+					if (index == missedIndex) {
+						if (answered) {
+							return <HighLetter key={index}>{item}</HighLetter>;
+						} else {
+							return <StyledLetter key={index}>_</StyledLetter>;
+						}
+					}
+					return <StyledLetter key={index}>{item}</StyledLetter>;
+				})}
+			</LetterContainer>
 			{context ? <StyledContext>{context}</StyledContext> : ""}
 		</WordContainer>
 	);

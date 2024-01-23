@@ -29,10 +29,9 @@ const Letter = styled.Text`
 `;
 
 export default function LetterOptions({
-	showNextWord,
-	updateStats,
 	options,
 	correct,
+	handleAnswer,
 }) {
 	return (
 		<OptionsContainer>
@@ -40,8 +39,7 @@ export default function LetterOptions({
 				<LetterButton
 					key={index}
 					onPress={() => {
-						showNextWord(correct == item);
-						updateStats(correct == item);
+						handleAnswer(correct == item);
 					}}
 				>
 					<Letter>{item}</Letter>

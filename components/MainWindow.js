@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Vibration } from "react-native";
 import styled from "styled-components";
 
 import LevelBar from "./LevelBar";
 import Info from "./Info";
 import Word from "./Word";
 import LetterOptions from "./LetterOptions";
+import NextButton from "./NextButton";
 
 import wordsData from "../data/words.json";
 
@@ -47,6 +48,10 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		multiplier: 1,
 		streak: 0,
 	});
+	const [answerStatus, setAnswerStatus] = useState({
+		answered: false,
+	});
+	const [handled, setHandled] = useState(false);
 	useEffect(() => {
 		const data = wordsData[taskInfo.number];
 		setWords(data.words);
@@ -78,7 +83,12 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		} else {
 			newWords.splice(15, 0, current);
 		}
-		setVisibleWords(newWords);
+		setHandled(true);
+		setTimeout(() => {
+			setVisibleWords(newWords);
+			setAnswerStatus({ answered: false });
+			setHandled(false);
+		}, 500);
 	};
 
 	const updateStats = (correct) => {
@@ -96,24 +106,55 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 			}
 		} else {
 			newStats.streak = 0;
+			newStats.multiplier = 1;
 		}
 		setStats(newStats);
 	};
+
+	const handleAnswer = (correct) => {
+		const newAnswerStatus = {
+			answered: true,
+			correct: correct,
+		};
+		if (correct) {
+			Vibration.vibrate(100);
+			showNextWord(correct);
+		} else {
+			Vibration.vibrate(300);
+		}
+		updateStats(correct);
+		setAnswerStatus(newAnswerStatus);
+	};
+
+	let wordContent;
+	if (words.length == 0) {
+		wordContent = <Text>Загрузка...</Text>;
+	} else {
+		wordContent = (
+			<Word wordInfo={visibleWords[0]} answered={answerStatus.answered} />
+		);
+	}
+
+	let OptionsContent;
+	if (words.length == 0 || handled) {
+		OptionsContent = <></>;
+	} else if (!answerStatus.answered) {
+		OptionsContent = (
+			<LetterOptions
+				correct={visibleWords[0].missedLetter}
+				options={visibleWords[0].options}
+				handleAnswer={handleAnswer}
+			/>
+		);
+	} else if (!answerStatus.correct) {
+		OptionsContent = <NextButton showNextWord={showNextWord} />;
+	}
 	return (
 		<Container>
-			<LevelBar stats={stats}/>
-			<Info toggleVisible={toggleVisible} taskInfo={taskInfo} stats={stats}/>
-			{words.length != 0 ? <Word wordInfo={visibleWords[0]} /> : <Text></Text>}
-			{words.length != 0 ? (
-				<LetterOptions
-					showNextWord={showNextWord}
-					updateStats={updateStats}
-					correct={visibleWords[0].missedLetter}
-					options={visibleWords[0].options}
-				/>
-			) : (
-				<Text></Text>
-			)}
+			<LevelBar stats={stats} />
+			<Info toggleVisible={toggleVisible} taskInfo={taskInfo} stats={stats} />
+			{wordContent}
+			{OptionsContent}
 		</Container>
 	);
 }

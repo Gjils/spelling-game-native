@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	ScrollView,
+	Vibration,
 } from "react-native";
 import styled from "styled-components";
 
@@ -52,7 +53,13 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 			transparent={true}
 			onBackdropPress={closeMenu}
 		>
-			<StyledMenuWrapper activeOpacity={1} onPressOut={closeMenu}>
+			<StyledMenuWrapper
+				activeOpacity={1}
+				onPressOut={() => {
+					Vibration.vibrate(100);
+					closeMenu();
+				}}
+			>
 				<TouchableWithoutFeedback>
 					<StyledMenu>
 						<MenuTitleContainer>
@@ -66,6 +73,7 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 									number={number}
 									isActive={index === active}
 									setActive={() => {
+										Vibration.vibrate(100);
 										setActive(index);
 									}}
 									closeMenu={closeMenu}
