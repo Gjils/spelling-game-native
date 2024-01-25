@@ -1,44 +1,47 @@
-import styled from "styled-components";
-import { Text, Pressable, View, Vibration } from "react-native";
+import { Text, Pressable, View, Vibration, StyleSheet } from "react-native";
 import { MaterialIcons as Icons } from "@expo/vector-icons";
 
-const ButtonContainer = styled.View`
-	position: absolute;
-	bottom: 80px;
-	left: 0;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-const StyledButton = styled.Pressable`
-	padding: 15px;
-	background-color: #e63244;
-	border-radius: 15px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-`;
-const ButtonText = styled.Text`
-	position: relative;
-	bottom: 2px;
-	font-size: 17px;
-	font-weight: 900;
-	display: flex;
-	color: #f8f8f8;
-`;
 export default function NextButton({ showNextWord }) {
 	return (
-		<ButtonContainer>
-			<StyledButton
+		<View style={styles.buttonContainer}>
+			<Pressable
+				style={styles.button}
 				onPress={() => {
 					Vibration.vibrate(100);
 					showNextWord(false);
 				}}
 			>
-				<ButtonText>Продолжить</ButtonText>
+				<Text style={styles.buttonText}>Продолжить</Text>
 				<Icons name="navigate-next" size={30} color={"#f8f8f8"} />
-			</StyledButton>
-		</ButtonContainer>
+			</Pressable>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	buttonContainer: {
+		position: "absolute",
+		zIndex: 1,
+		bottom: 80,
+		left: 0,
+		width: "100%",
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	button: {
+		padding: 15,
+		backgroundColor: "#e63244",
+		borderRadius: 15,
+		flex: 1,
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	buttonText: {
+		position: "relative",
+		bottom: 2,
+		fontSize: 17,
+		fontWeight: "900",
+		color: "#f8f8f8",
+	},
+});

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { View, Text, Vibration } from "react-native";
 import styled from "styled-components";
 
@@ -10,6 +10,15 @@ import NextButton from "./NextButton";
 
 import wordsData from "../data/words.json";
 
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+	withSequence,
+	withRepeat,
+} from "react-native-reanimated";
+
+// Array shuffle function
 function shuffleArray(array) {
 	let currentIndex = array.length,
 		randomIndex;
@@ -26,16 +35,15 @@ function shuffleArray(array) {
 	return array;
 }
 
-const Container = styled.View`
-	position: relative;
-	border-radius: 20px;
-	overflow: hidden;
-	border: 3px solid #252525;
-	height: 100%;
-	background-color: #f8f8f8;
-`;
-
 export default function MainWindow({ toggleVisible, taskInfo }) {
+
+	const wordOpacity = useSharedValue(1);
+	const wordShaking = useSharedValue(0);
+	const shakingStyle = useAnimatedStyle(() => ({
+		transform: [{ translateX: wordShaking.value }],
+	}));
+	const progressWidth = useSharedValue("0%");
+	// Init states
 	const [words, setWords] = useState([]);
 	const [filters, setFilters] = useState([]);
 	const [visibleWords, setVisibleWords] = useState([]);
@@ -47,11 +55,14 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		levelCap: 100,
 		multiplier: 1,
 		streak: 0,
+		progress: 0,
+		previousProgress: 0,
 	});
 	const [answerStatus, setAnswerStatus] = useState({
 		answered: false,
 	});
-	const [handled, setHandled] = useState(false);
+
+	// Load data
 	useEffect(() => {
 		const data = wordsData[taskInfo.number];
 		setWords(data.words);
@@ -67,6 +78,8 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		});
 		setVisibleWords(shuffleArray(newWords));
 	};
+
+	// Filters func
 	const setFilter = (changedIndex) => {
 		const newFilters = filters.map((item, index) =>
 			changedIndex === index ? { ...item, active: !item.active } : item,
@@ -75,6 +88,7 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		setFilteredWords(newFilters);
 	};
 
+	// Showing next word
 	const showNextWord = (correct) => {
 		const newWords = [...visibleWords];
 		const current = newWords.splice(0, 1)[0];
@@ -83,12 +97,17 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		} else {
 			newWords.splice(15, 0, current);
 		}
-		setHandled(true);
+		wordOpacity.value = withTiming(0, {
+			duration: 400,
+		});
+
 		setTimeout(() => {
 			setVisibleWords(newWords);
 			setAnswerStatus({ answered: false });
-			setHandled(false);
-		}, 500);
+			wordOpacity.value = withTiming(1, {
+				duration: 100,
+			});
+		}, 400);
 	};
 
 	const updateStats = (correct) => {
@@ -97,8 +116,8 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		if (correct) {
 			newStats.correct += 1;
 			newStats.streak += 1;
-			newStats.multiplier = Math.floor(newStats.streak / 10) + 1;
 			newStats.levelPoints += 10 * newStats.multiplier;
+			newStats.multiplier = Math.floor(newStats.streak / 10) + 1;
 			if (newStats.levelPoints >= newStats.levelCap) {
 				newStats.levelPoints -= newStats.levelCap;
 				newStats.levelCap += 10;
@@ -108,6 +127,13 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 			newStats.streak = 0;
 			newStats.multiplier = 1;
 		}
+		newStats.previousProgress = newStats.progress;
+		progressWidth.value = withTiming(
+			Math.floor((newStats.levelPoints / newStats.levelCap) * 100) + "%",
+		);
+		newStats.progress = Math.floor(
+			(newStats.levelPoints / newStats.levelCap) * 100,
+		);
 		setStats(newStats);
 	};
 
@@ -121,6 +147,16 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 			showNextWord(correct);
 		} else {
 			Vibration.vibrate(300);
+			const OFFSET = 10,
+				TIME = 40;
+			wordShaking.value = withSequence(
+				// start from -OFFSET
+				withTiming(-OFFSET, { duration: TIME / 2 }),
+				// shake between -OFFSET and OFFSET 5 times
+				withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+				// go back to 0 at the end
+				withTiming(0, { duration: TIME / 2 }),
+			);
 		}
 		updateStats(correct);
 		setAnswerStatus(newAnswerStatus);
@@ -131,12 +167,17 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		wordContent = <Text>Загрузка...</Text>;
 	} else {
 		wordContent = (
-			<Word wordInfo={visibleWords[0]} answered={answerStatus.answered} />
+			<Word
+				wordInfo={visibleWords[0]}
+				answered={answerStatus.answered}
+				wordOpacity={wordOpacity}
+				shakingStyle={shakingStyle}
+			/>
 		);
 	}
 
 	let OptionsContent;
-	if (words.length == 0 || handled) {
+	if (words.length == 0) {
 		OptionsContent = <></>;
 	} else if (!answerStatus.answered) {
 		OptionsContent = (
@@ -150,11 +191,21 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		OptionsContent = <NextButton showNextWord={showNextWord} />;
 	}
 	return (
-		<Container>
-			<LevelBar stats={stats} />
+		<View style={container}>
+			<LevelBar stats={stats} progressWidth={progressWidth} />
 			<Info toggleVisible={toggleVisible} taskInfo={taskInfo} stats={stats} />
 			{wordContent}
 			{OptionsContent}
-		</Container>
+		</View>
 	);
 }
+
+const container = {
+	position: "relative",
+	borderRadius: 20,
+	overflow: "hidden",
+	borderWidth: 3,
+	borderColor: "#252525",
+	height: "100%",
+	backgroundColor: "#f8f8f8",
+};

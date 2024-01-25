@@ -1,50 +1,55 @@
 import React from "react";
 import styled from "styled-components";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, StyleSheet } from "react-native";
 
-const OptionsContainer = styled.View`
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 60px;
-	margin: auto;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-`;
-const LetterButton = styled.Pressable`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding-bottom: 5px;
-	width: 50px;
-	margin: 0 30px;
-	border: 3px solid #252525;
-	border-radius: 10px;
-`;
-const Letter = styled.Text`
-	color: #252525;
-	font-size: 40px;
-	font-weight: 900;
-`;
-
-export default function LetterOptions({
-	options,
-	correct,
-	handleAnswer,
-}) {
+export default function LetterOptions({ options, correct, handleAnswer }) {
 	return (
-		<OptionsContainer>
+		<View style={styles.optionsContainer}>
 			{options.map((item, index) => (
-				<LetterButton
+				<Pressable
+					style={styles.letterButton}
 					key={index}
 					onPress={() => {
 						handleAnswer(correct == item);
 					}}
 				>
-					<Letter>{item}</Letter>
-				</LetterButton>
+					<Text style={styles.letter}>{item}</Text>
+				</Pressable>
 			))}
-		</OptionsContainer>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	optionsContainer: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		bottom: 60,
+		margin: "auto",
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "center",
+	},
+	letterButton: {
+		position: "relative",
+		zIndex: 1,
+		flex: -1,
+		justifyContent: "center",
+		alignItems: "center",
+		paddingBottom: 5,
+		width: 60,
+		marginTop: 0,
+		marginBottom: 0,
+		marginRight: 20,
+		marginLeft: 20,
+		borderWidth: 3,
+		borderColor: "#252525",
+		borderRadius: 10,
+	},
+	letter: {
+		color: "#252525",
+		fontSize: 40,
+		fontWeight: "900",
+	},
+});

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+	StyleSheet,
 	Modal,
 	Text,
 	View,
@@ -14,37 +15,6 @@ import styled from "styled-components";
 
 import MenuItem from "./MenuItem";
 
-const StyledMenuWrapper = styled.TouchableOpacity`
-	display: flex;
-	align-items: center;
-	width: 100%;
-	height: 100%;
-	padding-top: 40px;
-	background-color: rgba(0, 0, 0, 0.4);
-`;
-const StyledMenu = styled.View`
-	width: 90%;
-	background-color: #f8f8f8;
-	border: 3px solid #252525;
-	border-radius: 15px;
-	overflow: hidden;
-`;
-const MenuTitleContainer = styled.View`
-	padding-top: 20px;
-	padding: 40px 0 5px 0;
-	background-color: #252525;
-`;
-const MenuTitle = styled.Text`
-	text-align: center;
-	color: #f8f8f8;
-	font-weight: 900;
-	font-size: 25px;
-`;
-const MenuList = styled.View`
-	background-color: #f8f8f8;
-	padding: 20px 20px 5px 20px;
-`;
-
 export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 	return (
 		<Modal
@@ -53,7 +23,8 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 			transparent={true}
 			onBackdropPress={closeMenu}
 		>
-			<StyledMenuWrapper
+			<TouchableOpacity
+				style={styles.menuWrapper}
 				activeOpacity={1}
 				onPressOut={() => {
 					Vibration.vibrate(100);
@@ -61,11 +32,11 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 				}}
 			>
 				<TouchableWithoutFeedback>
-					<StyledMenu>
-						<MenuTitleContainer>
-							<MenuTitle>Задания</MenuTitle>
-						</MenuTitleContainer>
-						<MenuList>
+					<View style={styles.menu}>
+						<View style={styles.titleContainer}>
+							<Text style={styles.title}>Задания</Text>
+						</View>
+						<View style={styles.list}>
 							{tasks.map(({ name, number }, index) => (
 								<MenuItem
 									key={index}
@@ -79,10 +50,45 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 									closeMenu={closeMenu}
 								/>
 							))}
-						</MenuList>
-					</StyledMenu>
+						</View>
+					</View>
 				</TouchableWithoutFeedback>
-			</StyledMenuWrapper>
+			</TouchableOpacity>
 		</Modal>
 	);
 }
+
+const styles = StyleSheet.create({
+	menuWrapper: {
+		flex: 1,
+		alignItems: "center",
+		width: "100%",
+		height: "100%",
+		paddingTop: 40,
+		backgroundColor: "rgba(0, 0, 0, 0.4)",
+	},
+	menu: {
+		width: "90%",
+		backgroundColor: "#f8f8f8",
+		borderWidth: 3,
+		borderColor: "#252525",
+		borderRadius: 15,
+		overflow: "hidden",
+	},
+	titleContainer: {
+		paddingTop: 40,
+		paddingBottom: 5,
+		backgroundColor: "#252525",
+	},
+	title: {
+		textAlign: "center",
+		color: "#f8f8f8",
+		fontWeight: "900",
+		fontSize: 25,
+	},
+	list: {
+		backgroundColor: "#f8f8f8",
+		padding: 20,
+		paddingBottom: 5,
+	},
+});

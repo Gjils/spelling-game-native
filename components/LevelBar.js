@@ -1,22 +1,25 @@
-import React from "react";
-import styled from "styled-components";
-import { View } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
 
-export default function LevelBar({ stats }) {
-	const { levelPoints, levelCap } = stats;
-	const StyledLevelBar = styled.View`
-		height: 20px;
-		border-radius: 15px 15px 0 0;
-	`;
-
-	const Progress = styled.View`
-		width: ${Math.floor((levelPoints / levelCap) * 100)}%;
-		height: 100%;
-		background-color: #a8e4a0;
-	`;
+export default function LevelBar({ stats, progressWidth }) {
 	return (
-		<StyledLevelBar>
-			<Progress></Progress>
-		</StyledLevelBar>
+		<View style={styles.levelBar}>
+			<Animated.View
+				style={{ ...styles.progress, width: progressWidth }}
+			></Animated.View>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	levelBar: {
+		height: 20,
+		borderTopLeftRadius: 15,
+		borderTopRightRadius: 15,
+	},
+	progress: {
+		height: "100%",
+		backgroundColor: "#a8e4a0",
+	},
+});
