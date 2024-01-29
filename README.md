@@ -1,8 +1,7 @@
 # Spelling native
 
-<a href="https://github.com/Gjils/spelling-game-native/blob/main/preview/spelling-game.apk" download="spelling-game">
-  <h3>Download app (android)</h3>
-</a>
+<a href="https://github.com/Gjils/spelling-game-native/blob/main/preview/spelling-game.apk" download="spelling-game">Download app (android)</a>
+<br/>
 
 Spelling native is a mobile version of [this](https://github.com/Gjils/spelling-game) project written on react native.
 
