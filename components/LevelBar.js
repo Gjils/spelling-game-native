@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import Animated, { useSharedValue, withTiming } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 export default function LevelBar({ stats, progressWidth }) {
 	return (

@@ -12,9 +12,9 @@ import {
 	Vibration,
 } from "react-native";
 
-import MenuItem from "./MenuItem";
+import FilterItem from "./FilterItem";
 
-export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
+export default function Filters({ visible, filters, setFilter, closeMenu }) {
 	return (
 		<Modal
 			visible={visible}
@@ -33,20 +33,19 @@ export default function Menu({ visible, active, tasks, setActive, closeMenu }) {
 				<TouchableWithoutFeedback>
 					<View style={styles.menu}>
 						<View style={styles.titleContainer}>
-							<Text style={styles.title}>Задания</Text>
+							<Text style={styles.title}>Фильтры</Text>
 						</View>
 						<View style={styles.list}>
-							{tasks.map(({ name, number }, index) => (
-								<MenuItem
-									key={index}
+							{filters.map(({ name, active }, index) => (
+								<FilterItem
+									key={index * 10 + active}
 									name={name}
-									number={number}
-									isActive={index === active}
-									setActive={() => {
+									active={active}
+									setFilter={() => {
 										Vibration.vibrate(100);
-										setActive(index);
+										setFilter(index);
 									}}
-									closeMenu={closeMenu}
+									index={index}
 								/>
 							))}
 						</View>
@@ -63,11 +62,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		width: "100%",
 		height: "100%",
-		paddingTop: 40,
+		paddingTop: 80,
 		backgroundColor: "rgba(0, 0, 0, 0.4)",
 	},
 	menu: {
-		width: "90%",
+		width: "80%",
 		backgroundColor: "#f8f8f8",
 		borderWidth: 3,
 		borderColor: "#252525",
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
 		overflow: "hidden",
 	},
 	titleContainer: {
-		paddingTop: 40,
+		paddingTop: 10,
 		paddingBottom: 5,
 		backgroundColor: "#252525",
 	},
@@ -83,11 +82,11 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		color: "#f8f8f8",
 		fontWeight: "900",
-		fontSize: 25,
+		fontSize: 20,
 	},
 	list: {
 		backgroundColor: "#f8f8f8",
-		padding: 20,
+		padding: 15,
 		paddingBottom: 5,
 	},
 });

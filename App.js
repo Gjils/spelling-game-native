@@ -1,16 +1,10 @@
-import { StatusBar } from "react-native";
-import styled from "styled-components";
+import { StatusBar, View } from "react-native";
+
 import { useState } from "react";
 
 import Menu from "./components/Menu";
 import MainWindow from "./components/MainWindow";
 
-const Container = styled.SafeAreaView`
-	width: 100%;
-	height: 100%;
-	padding: 15px;
-	background-color: #ccccff;
-`;
 
 export default function App() {
 	const [menuVisible, setMenuVisible] = useState(false);
@@ -35,9 +29,9 @@ export default function App() {
 	const [activeTask, setActiveTask] = useState(0);
 
 	return (
-		<Container>
+		<View style={container}>
 			<MainWindow
-				toggleVisible={() => {
+				toggleMenuVisible={() => {
 					setMenuVisible(!menuVisible);
 				}}
 				taskInfo={tasksList[activeTask]}
@@ -53,6 +47,13 @@ export default function App() {
 				}}
 			/>
 			<StatusBar style="auto"></StatusBar>
-		</Container>
+		</View>
 	);
 }
+
+const container = {
+	width: "100%",
+	height: "100%",
+	padding: 15,
+	backgroundColor: "#ccccff",
+};

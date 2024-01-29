@@ -1,21 +1,6 @@
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
-import styled from "styled-components";
 
-const StyledRow = styled.View`
-	display: flex;
-	flex-direction: row;
-`;
-
-const RowElement = styled.Text`
-	font-size: 15px;
-	font-weight: 900;
-	color: #252525;
-	margin-left: 5px;
-`;
-const StreakElement = styled(RowElement)`
-	color: #ed7e40;
-`;
 export default function LevelInfo({ stats }) {
 	const { level, levelCap, levelPoints, multiplier } = stats;
 	return (
@@ -28,7 +13,7 @@ export default function LevelInfo({ stats }) {
 			<Text style={styles.rowElement}>
 				{levelPoints}/{levelCap}
 			</Text>
-			<RowElement>Уровень {level}</RowElement>
+			<Text style={styles.rowElement}>Уровень {level}</Text>
 		</View>
 	);
 }

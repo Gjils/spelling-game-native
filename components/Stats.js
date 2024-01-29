@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import styled from "styled-components";
 import { FontAwesome5 as Icon } from "@expo/vector-icons";
 
 export default function Stats({ stats }) {
@@ -13,17 +12,20 @@ export default function Stats({ stats }) {
 			<Text style={styles.accuracy}>
 				{Math.floor((correct / (common ? common : 1)) * 100)}%
 			</Text>
-			<View style={styles.streakElement}>
-				<Text style={styles.streakText}>Серия из</Text>
-				<View style={styles.fireIcon}>
-					<Icon name="fire-alt" size={18} color="#ed7e40" />
+			{streak >= 3 ? (
+				<View style={styles.streakElement}>
+					<Text style={styles.streakText}>Серия из</Text>
+					<View style={styles.fireIcon}>
+						<Icon name="fire-alt" size={18} color="#ed7e40" />
+					</View>
+					<Text style={styles.streakText}>{streak}!</Text>
 				</View>
-				<Text style={styles.streakText}>{streak}!</Text>
-			</View>
+			) : (
+				""
+			)}
 		</View>
 	);
 }
-
 
 const styles = StyleSheet.create({
 	common: {

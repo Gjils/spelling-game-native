@@ -1,36 +1,30 @@
 {
-  "expo": {
-    "name": "SpellingGame",
-    "slug": "SpellingGame",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.gjils.SpellingGame"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "513b65cd-1f51-4242-bf79-efafd7127998"
-      }
-    }
-  }
+	"expo": {
+		"name": "Spelling Game",
+		"slug": "SpellingGame",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/pen.png",
+		"userInterfaceStyle": "light",
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"assetBundlePatterns": ["**/*"],
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"package": "com.gjils.SpellingGame"
+		},
+		"web": {
+			"favicon": "./assets/pen.png"
+		},
+		"extra": {
+			"eas": {
+				"projectId": "513b65cd-1f51-4242-bf79-efafd7127998"
+			}
+		}
+	}
 }

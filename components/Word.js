@@ -1,5 +1,5 @@
 import { Component } from "react";
-import styled from "styled-components";
+
 import { Text, Dimensions, View, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -37,10 +37,7 @@ export default class Word extends Component {
 							if (answered) {
 								return (
 									<Text
-										style={[
-											styles.highLetter,
-											{ fontSize: wordFontSize },
-										]}
+										style={[styles.highLetter, { fontSize: wordFontSize }]}
 										key={index}
 									>
 										{item}
@@ -68,11 +65,9 @@ export default class Word extends Component {
 					})}
 				</View>
 				{context ? (
-					<View
-						context={[styles.context, { fontSize: wordFontSize * 0.8 }]}
-					>
+					<Text style={[styles.context, { fontSize: wordFontSize * 0.8 }]}>
 						{context}
-					</View>
+					</Text>
 				) : (
 					""
 				)}

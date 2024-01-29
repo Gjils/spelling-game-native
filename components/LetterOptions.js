@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+
 import { Pressable, Text, View, StyleSheet } from "react-native";
 
 export default function LetterOptions({ options, correct, handleAnswer }) {

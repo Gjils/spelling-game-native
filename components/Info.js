@@ -1,15 +1,23 @@
 import React from "react";
-import styled from "styled-components";
+
 import { View, Text, StyleSheet } from "react-native";
 
 import TaskInfo from "./TaskInfo";
 import GameStatus from "./GameStatus";
 
-const StyledInfo = styled.View``;
-export default function Info({ toggleVisible, taskInfo, stats }) {
+export default function Info({
+	toggleMenuVisible,
+	toggleFiltersVisible,
+	taskInfo,
+	stats,
+}) {
 	return (
 		<View style={styles.info}>
-			<TaskInfo toggleVisible={toggleVisible} taskInfo={taskInfo} />
+			<TaskInfo
+				toggleMenuVisible={toggleMenuVisible}
+				toggleFiltersVisible={toggleFiltersVisible}
+				taskInfo={taskInfo}
+			/>
 			<GameStatus stats={stats} />
 		</View>
 	);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { View, Text, Vibration } from "react-native";
-import styled from "styled-components";
+import { View, Text, Vibration, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import LevelBar from "./LevelBar";
 import Info from "./Info";
@@ -17,6 +17,7 @@ import Animated, {
 	withSequence,
 	withRepeat,
 } from "react-native-reanimated";
+import Filters from "./Filters";
 
 // Array shuffle function
 function shuffleArray(array) {
@@ -35,8 +36,7 @@ function shuffleArray(array) {
 	return array;
 }
 
-export default function MainWindow({ toggleVisible, taskInfo }) {
-
+export default function MainWindow({ toggleMenuVisible, taskInfo }) {
 	const wordOpacity = useSharedValue(1);
 	const wordShaking = useSharedValue(0);
 	const shakingStyle = useAnimatedStyle(() => ({
@@ -44,6 +44,7 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 	}));
 	const progressWidth = useSharedValue("0%");
 	// Init states
+	const [filtersVisible, setFiltersVisible] = useState(false);
 	const [words, setWords] = useState([]);
 	const [filters, setFilters] = useState([]);
 	const [visibleWords, setVisibleWords] = useState([]);
@@ -68,7 +69,17 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		setWords(data.words);
 		setFilters(data.filters.map((item) => ({ ...item, active: true })));
 		setVisibleWords(shuffleArray(data.words));
+		AsyncStorage.getItem(`stats-${taskInfo.number}`).then((data) => {
+			if (data != null) {
+				const obj = JSON.parse(data);
+				progressWidth.value = obj.progress + "%";
+				setStats(obj);
+			} else {
+				progressWidth.value = "0%";
+			}
+		});
 	}, []);
+
 	const setFilteredWords = (filters) => {
 		let newWords = [...words];
 		filters.forEach(({ active, name }) => {
@@ -134,6 +145,7 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 		newStats.progress = Math.floor(
 			(newStats.levelPoints / newStats.levelCap) * 100,
 		);
+		AsyncStorage.setItem(`stats-${taskInfo.number}`, JSON.stringify(newStats));
 		setStats(newStats);
 	};
 
@@ -163,8 +175,14 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 	};
 
 	let wordContent;
-	if (words.length == 0) {
-		wordContent = <Text>Загрузка...</Text>;
+	if (visibleWords.length == 0) {
+		wordContent = (
+			<View style={styles.errorMessage}>
+				<Text style={styles.errorMessageText}>
+					Извините, слов по таким фильтрам нет
+				</Text>
+			</View>
+		);
 	} else {
 		wordContent = (
 			<Word
@@ -177,7 +195,7 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 	}
 
 	let OptionsContent;
-	if (words.length == 0) {
+	if (visibleWords.length == 0) {
 		OptionsContent = <></>;
 	} else if (!answerStatus.answered) {
 		OptionsContent = (
@@ -190,22 +208,55 @@ export default function MainWindow({ toggleVisible, taskInfo }) {
 	} else if (!answerStatus.correct) {
 		OptionsContent = <NextButton showNextWord={showNextWord} />;
 	}
+
 	return (
-		<View style={container}>
+		<View style={styles.container}>
+			<Filters
+				visible={filtersVisible}
+				closeMenu={() => {
+					setFiltersVisible(false);
+				}}
+				filters={filters}
+				setFilter={setFilter}
+			/>
 			<LevelBar stats={stats} progressWidth={progressWidth} />
-			<Info toggleVisible={toggleVisible} taskInfo={taskInfo} stats={stats} />
+			<Info
+				toggleMenuVisible={toggleMenuVisible}
+				toggleFiltersVisible={() => {
+					setFiltersVisible(!filtersVisible);
+				}}
+				taskInfo={taskInfo}
+				stats={stats}
+			/>
 			{wordContent}
 			{OptionsContent}
 		</View>
 	);
 }
 
-const container = {
-	position: "relative",
-	borderRadius: 20,
-	overflow: "hidden",
-	borderWidth: 3,
-	borderColor: "#252525",
-	height: "100%",
-	backgroundColor: "#f8f8f8",
-};
+
+const styles = StyleSheet.create({
+	container: {
+		position: "relative",
+		borderRadius: 20,
+		overflow: "hidden",
+		borderWidth: 3,
+		borderColor: "#252525",
+		height: "100%",
+		backgroundColor: "#f8f8f8",
+	},
+	errorMessage: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		position: "absolute",
+		width: "100%",
+		height: "100%",
+		zIndex: 0,
+	},
+	errorMessageText: {
+		fontSize: 20,
+		fontWeight: "900",
+		textAlign: "center",
+	},
+});
