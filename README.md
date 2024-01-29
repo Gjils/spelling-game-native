@@ -11,6 +11,6 @@ Spelling native is a mobile version of [this](https://github.com/Gjils/spelling-
 
 ## Preview
 
-<img src="https://github.com/Gjils/spelling-game-native/blob/main/preview/mobile-purple.jpg" alt="Mobile purple" width="400"/>
+<img src="https://github.com/Gjils/spelling-game-native/blob/main/preview/mobile-purple.jpg" alt="Mobile purple" width="322"/>
   
 > Mobile purple
