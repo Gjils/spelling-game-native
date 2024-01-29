@@ -8,6 +8,6 @@ Spelling native is a mobile version of [this](https://github.com/Gjils/spelling-
 
 ## Preview
 
-![Mobile](https://github.com/Gjils/spelling-game/blob/main/preview/mobile-green-light.jpg) 
+![Mobile purple](https://github.com/Gjils/spelling-game-native/blob/main/preview/mobile-purple.jpg) 
   
-> Mobile
+> Mobile purple
